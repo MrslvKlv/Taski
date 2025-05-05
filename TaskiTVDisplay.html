@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Taski TV Display</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+      background-color: black;
+    }
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      opacity: 1;
+      transition: opacity 1s ease-in-out;
+    }
+  </style>
+</head>
+<body>
+  <iframe src="http://127.0.0.1:5500/testers/Taski.html" id="webpageFrame"></iframe>
+
+  <script>
+    const iframe = document.getElementById('webpageFrame');
+
+    // Reload iframe every 30s.
+    setInterval(() => {
+      iframe.style.opacity = 0;
+
+      setTimeout(() => {
+        iframe.src = iframe.src.split('?')[0] + '?t=' + new Date().getTime();
+
+        setTimeout(() => {
+          iframe.style.opacity = 1;
+          setTimeout(startScrolling, 1000); // Timeout before autoscroll at pageload
+        }, 500);
+      }, 1000);
+      
+    }, 30000); // 30s.
+
+    function startScrolling() {
+      const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+      if (!iframeDoc) return;
+
+      let direction = 1; // 1 = down, -1 = up
+
+      function scrollStep() {
+        const scrollHeight = iframeDoc.body.scrollHeight - iframeDoc.documentElement.clientHeight;
+        const currentScroll = iframe.contentWindow.scrollY || iframeDoc.documentElement.scrollTop || iframeDoc.body.scrollTop;
+
+        if (direction === 1) {
+          if (currentScroll >= scrollHeight) {
+            direction = -1; // Switch -> scroll up
+          }
+        } else {
+          if (currentScroll <= 0) {
+            direction = 1; // Switch -> scroll down
+          }
+        }
+
+        iframe.contentWindow.scrollBy(0, direction); // Scroll -> 1px up or down
+      }
+
+      clearInterval(window.scrollInterval);
+      window.scrollInterval = setInterval(scrollStep, 20); // Scroll speed in ms -> 20ms 
+    }
+
+    iframe.onload = () => {
+      startScrolling();
+    };
+  </script>
+</body>
+</html>

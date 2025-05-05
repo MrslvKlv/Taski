@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taski</title>
+    <!-- Favicon -->
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Native CSS -->
+    <link rel="stylesheet" href="./visuals/style.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- JsBarcode Library for barcode generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsbarcode/3.11.5/JsBarcode.all.min.js"></script>
+</head>
+<body class="min-h-screen p-4 md:p-6 bg-gradient-to-br from-gray-100 to-gray-200">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+            <div>
+                <h1 class="text-2xl md:text-3xl font-bold text-gray-800">IXD - Taski</h1>
+                <p class="text-gray-500">Powered by mNk </p>
+            </div>
+            <button id="themeToggleBtn" class="bg-gray-500 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded-lg transition-colors flex items-center gap-2">
+                <i class="fa-solid fa-moon"></i>
+                <span>Dark Mode</span>
+            </button>
+            <div class="flex gap-3">
+                <button id="addBadgeBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-lg transition-colors flex items-center gap-2">
+                    <i class="fa-solid fa-user-plus"></i>
+                    <span>Add Badge</span>
+                </button>
+                <button id="syncBtn" class="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg transition-colors flex items-center gap-2">
+                    <i class="fa-solid fa-sync"></i>
+                    <span>Sync</span>
+                </button>
+                <button id="clearDataBtn" class="bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-lg transition-colors flex items-center gap-2">
+                    <i class="fa-solid fa-trash"></i>
+                    <span>Clear Data</span>
+                </button>
+                <button id="saveSetupBtn" class="bg-teal-500 hover:bg-teal-600 text-white font-medium py-2 px-4 rounded-lg transition-colors flex items-center gap-2">
+                    <i class="fa-solid fa-download"></i>
+                    <span>Save Setup</span>
+                </button>
+                <button id="loadSetupBtn" class="bg-amber-500 hover:bg-amber-600 text-white font-medium py-2 px-4 rounded-lg transition-colors flex items-center gap-2">
+                    <i class="fa-solid fa-upload"></i>
+                    <span>Load Setup</span>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Main grid layout for shift board -->
+        <div id="shiftBoard" class="space-y-6">
+            <!-- Level 1: Team Leads, Shooting, Binding -->
+            <div class="level" id="level1">
+                <div class="level-title">Leadership & Receive Roles</div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="level1Container"></div>
+            </div>
+
+            <!-- Level 2: Tawi, Pallet Pullers -->
+            <div class="level" id="level2">
+                <div class="level-title">Handling</div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="level2Container"></div>
+            </div>
+
+            <!-- Level 3: Palletize -->
+            <div class="level" id="level3">
+                <div class="level-title">Palletize</div>
+                <div class="grid grid-cols-1 gap-4" id="level3Container"></div>
+            </div>
+
+            <!-- Level 4: Unassigned -->
+            <div class="level" id="level4">
+                <div class="level-title">Unassigned</div>
+                <div class="grid grid-cols-1 gap-4" id="level4Container"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Add Badge Modal -->
+    <div id="badgeModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 hidden z-50 flex items-center justify-center">
+        <div class="modal-content bg-white rounded-xl shadow-xl w-full max-w-md mx-4 overflow-hidden">
+            <div class="bg-indigo-600 px-6 py-4 flex justify-between items-center">
+                <h2 class="text-xl font-semibold text-white">Add New Badge</h2>
+                <button id="closeModal" class="text-white hover:text-indigo-200 transition-colors">
+                    <i class="fa-solid fa-times text-xl"></i>
+                </button>
+            </div>
+            <form id="badgeForm" class="p-6">
+                <div class="mb-4">
+                    <label for="badgeName" class="block text-sm font-medium text-gray-700 mb-1">Employee Name</label>
+                    <input type="text" id="badgeName" required
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+                <div class="mb-4">
+                    <label for="badgeId" class="block text-sm font-medium text-gray-700 mb-1">Employee ID</label>
+                    <input type="text" id="badgeId" required
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+                <div class="mb-5">
+                    <label for="initialRole" class="block text-sm font-medium text-gray-700 mb-1">Initial Role</label>
+                    <select id="initialRole"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        <option value="unassigned">Unassigned</option>
+                        <option value="teamLead">Team Lead</option>
+                        <option value="palletPuller">Pallet Puller</option>
+                        <option value="palletize">Palletize</option>
+                        <option value="binding">Binding</option>
+                        <option value="shooting">Shooting</option>
+                        <option value="tawiOperators">Tawi Operators</option>
+                    </select>
+                    <div class="mb-5">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Shift</label>
+                        <div class="flex flex-wrap gap-2">
+                            <label class="flex items-center space-x-2">
+                                <input type="checkbox" name="shift" value="NB3" class="shift-checkbox">
+                                <span>NB3</span>
+                            </label>
+                            <label class="flex items-center space-x-2">
+                                <input type="checkbox" name="shift" value="NA5" class="shift-checkbox">
+                                <span>NA5</span>
+                            </label>
+                            <label class="flex items-center space-x-2">
+                                <input type="checkbox" name="shift" value="Donut" class="shift-checkbox">
+                                <span>Donut</span>
+                            </label>
+                            <label class="flex items-center space-x-2">
+                                <input type="checkbox" name="shift" value="NF6" class="shift-checkbox">
+                                <span>NF6</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" 
+                    class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-lg transition-colors">
+                    Create Badge
+                </button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Notification Toast -->
+    <div id="notification" class="notification fixed bottom-4 right-4 p-4 rounded-lg shadow-lg hidden max-w-xs z-50">
+        <div class="flex items-center">
+            <i id="notificationIcon" class="mr-3 text-white"></i>
+            <p id="notificationText" class="text-white font-medium"></p>
+        </div>
+    </div>
+    <input type="file" id="fileInput" accept=".json" style="display: none;">
+    <!-- Recipients -->
+     <script src="./core/js/config.js"></script>
+     <script src="./core/js/dragdrop.js"></script>
+     <script src="./core/js/forms.js"></script>
+     <script src="./core/js/modals.js"></script>
+     <script src="./core/js/models.js"></script>
+     <script src="./core/js/storage.js"></script>
+     <script src="./core/js/ui.js"></script>
+     <script src="./core/js/sync.js"></script>
+     <script>
+        // DOM Elements & Event Listeners //
+        const addBadgeBtn = document.getElementById('addBadgeBtn');
+        const syncBtn = document.getElementById('syncBtn');
+        const badgeModal = document.getElementById('badgeModal');
+        const closeModal = document.getElementById('closeModal');
+        const badgeForm = document.getElementById('badgeForm');
+        const notification = document.getElementById('notification');
+        const notificationIcon = document.getElementById('notificationIcon');
+        const notificationText = document.getElementById('notificationText');
+        document.getElementById('saveSetupBtn').addEventListener('click', saveSetupAsJson);
+        document.getElementById('loadSetupBtn').addEventListener('click', triggerFileInput);
+        document.getElementById('fileInput').addEventListener('change', loadSetupFromJson);
+        document.getElementById('clearDataBtn').addEventListener('click', clearAllData);
+        syncBtn.addEventListener('click', syncData);
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeShiftBoard();
+        });
+        addBadgeBtn.addEventListener('click', openModal);
+        closeModal.addEventListener('click', closeModalFunc);
+        badgeForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('badgeName').value;
+            const id = document.getElementById('badgeId').value;
+            const role = document.getElementById('initialRole').value;
+            const shiftCheckboxes = document.querySelectorAll('.shift-checkbox');
+            let selectedShift = '';
+            shiftCheckboxes.forEach(cb => {
+                if (cb.checked) {
+                    selectedShift = cb.value;
+                }
+            });
+            if (!selectedShift) {
+                showNotification('Please select a shift!', 'error');
+                return;
+            }
+            const currentCount = badges.filter(badge => badge.role === role).length;
+            if (currentCount >= roles[role].limit) {
+                showNotification(`${roles[role].name} section is full!`, 'error');
+                return;
+            }
+            if (badges.some(badge => badge.id === id)) {
+                showNotification('Employee ID already exists!', 'error');
+                return;
+            }
+            const newBadge = createBadge(name, id, role, selectedShift);
+            badges.push(newBadge);
+            saveToLocalStorage();
+            renderBadges();
+            closeModalFunc();
+            showNotification('Badge created successfully!', 'success');
+        });
+        window.addEventListener('click', (e) => {
+            if (e.target === badgeModal) {
+                closeModalFunc();
+            }
+        }); 
+        document.addEventListener('DOMContentLoaded', () => {
+            setupThemeToggle();
+        });
+    </script>
+</body>
+</html>
