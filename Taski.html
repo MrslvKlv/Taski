@@ -53,7 +53,17 @@
                 </button>
             </div>
         </div>
-        
+        <div class="w-full md:w-1/3 relative">
+            <div class="relative">
+                <input type="text" id="searchInput" 
+                    class="w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" 
+                    placeholder="Search by name, ID, shift or role...">
+                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                    <i class="fa-solid fa-search text-gray-400"></i>
+                </div>
+            </div>
+            <div id="searchResults" class="absolute z-10 bg-white w-full mt-1 rounded-lg shadow-lg max-h-80 overflow-y-auto hidden"></div>
+        </div>
         <!-- Main grid layout for shift board -->
         <div id="shiftBoard" class="space-y-6">
             <!-- Level 1: Team Leads, Shooting, Binding -->
@@ -161,6 +171,8 @@
      <script src="./core/js/storage.js"></script>
      <script src="./core/js/ui.js"></script>
      <script src="./core/js/sync.js"></script>
+     <script src="./core/js/filters.js"></script>
+    
      <script>
         // DOM Elements & Event Listeners //
         const addBadgeBtn = document.getElementById('addBadgeBtn');
@@ -220,6 +232,15 @@
         }); 
         document.addEventListener('DOMContentLoaded', () => {
             setupThemeToggle();
+        });
+        const searchInput = document.getElementById('searchInput');
+        const searchResults = document.getElementById('searchResults');
+        searchInput.addEventListener('input', performSearch);
+        searchInput.addEventListener('focus', showSearchResults);
+        document.addEventListener('click', (e) => {
+            if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+                searchResults.classList.add('hidden');
+            }
         });
     </script>
 </body>

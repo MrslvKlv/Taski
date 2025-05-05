@@ -88,6 +88,10 @@ body {
     height: 20px;
 }
 
+#searchInput {
+    margin-bottom: 16px;
+}
+
 /* Dark Mode Styles */
 body.dark-mode {
     background-color: #0f172a;
@@ -313,4 +317,70 @@ color: #e0e0e0;
 .badge-dropzone.drag-over {
 outline: 2px dashed #2196F3;
 background-color: #e3f2fd;
+}
+
+/* Search results animation */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+#searchResults {
+    animation: fadeIn 0.2s ease-in-out;
+    border: 1px solid #e5e7eb;
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.7); }
+    70% { box-shadow: 0 0 0 10px rgba(99, 102, 241, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); }
+}
+
+.animate-pulse {
+    animation: pulse 2s infinite;
+}
+
+.dark-mode #searchInput {
+    background-color: #1f2937;
+    border-color: #374151;
+    color: #f3f4f6;
+    margin-bottom: 16px;
+}
+
+.dark-mode #searchInput::placeholder {
+    color: #9ca3af;
+}
+
+.dark-mode #searchResults {
+    background-color: #1f2937;
+    border-color: #374151;
+}
+
+.dark-mode #searchResults .px-4.py-2.bg-gray-100 {
+    background-color: #374151;
+    color: #e5e7eb;
+}
+
+.dark-mode #searchResults .hover\:bg-gray-50:hover {
+    background-color: #273549;
+}
+
+.dark-mode #searchResults .text-gray-800 {
+    color: #f3f4f6;
+}
+
+.dark-mode #searchResults .text-gray-600 {
+    color: #d1d5db;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .header-content {
+        flex-direction: column;
+    }
+    
+    .w-full.md\:w-1\/3 {
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+    }
 }

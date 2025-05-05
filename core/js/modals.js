@@ -202,17 +202,12 @@ function initializeEditDelete() {
     updateBadgeFormSubmitHandler();
 }
         
+    // Modal functions
+    function openModal() {
+        badgeModal.classList.remove('hidden');
+    }
 
-        
-
-        
-
-        // Modal functions
-        function openModal() {
-            badgeModal.classList.remove('hidden');
-        }
-        
-        function closeModalFunc() {
-            badgeModal.classList.add('hidden');
-            badgeForm.reset();
-        }
+    function closeModalFunc() {
+        badgeModal.classList.add('hidden');
+        badgeForm.reset();
+    }
